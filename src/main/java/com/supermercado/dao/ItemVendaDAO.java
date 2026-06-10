@@ -35,15 +35,6 @@ public class ItemVendaDAO {
         return itens;
     }
 
-    public void delete(int idVenda, int idProduto) throws SQLException {
-        String sql = "DELETE FROM Itens_Venda WHERE id_venda = ? AND id_produto = ?";
-
-        try (PreparedStatement stmt = DatabaseConnection.getInstance().getConnection().prepareStatement(sql)) {
-            stmt.setInt(1, idVenda);
-            stmt.setInt(2, idProduto);
-            stmt.executeUpdate();
-        }
-    }
 
     public void deleteByVenda(int idVenda) throws SQLException {
         String sql = "DELETE FROM Itens_Venda WHERE id_venda = ?";
