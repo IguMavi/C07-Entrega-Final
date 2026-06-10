@@ -35,8 +35,8 @@ public class Main {
 
         System.out.println("\n📋 Usuários disponíveis:");
         System.out.println("┌─────────────────────────────────────────────────┐");
-        System.out.println("│ 1-OperadorCaixa1 → Apenas CONSULTAR e INSERIR      │");
-        System.out.println("│ 2-Admin          → Acesso TOTAL (UPDATE/DELETE)    │");
+        System.out.println("│ 1-OperadorCaixa1 → Apenas CONSULTAR e INSERIR    │");
+        System.out.println("│ 2-Admin          → Acesso TOTAL (UPDATE/DELETE)  │");
         System.out.println("└─────────────────────────────────────────────────┘");
 
         System.out.println("\n0. Sair");
@@ -88,6 +88,13 @@ public class Main {
             System.out.println("\n👤 Perfil: " + tipoUsuario);
             System.out.println("📌 Conectado como: " + nomeUsuario);
 
+            if (tipoUsuario.equals("OPERADOR")) {
+                System.out.println("\n⚠️  ATENÇÃO: Você tem permissão apenas para CONSULTAR e INSERIR!");
+                System.out.println("   Operações de UPDATE e DELETE NÃO estarão disponíveis.\n");
+            } else {
+                System.out.println("\n🔓 Você tem ACESSO TOTAL ao sistema.");
+                System.out.println("   Pode realizar qualquer operação (INSERT, UPDATE, DELETE).\n");
+            }
 
         } catch (SQLException e) {
             System.out.println("\n❌ Falha no login: " + e.getMessage());
@@ -202,24 +209,12 @@ public class Main {
             opcao = lerInteiro("Opção: ");
 
             switch (opcao) {
-                case 1:
-                    inserirFornecedor();
-                    break;
-                case 2:
-                    listarFornecedores();
-                    break;
-                case 3:
-                    buscarFornecedorPorId();
-                    break;
-                case 4:
-                    buscarFornecedorPorNome();
-                    break;
-                case 5:
-                    atualizarFornecedor();
-                    break;
-                case 6:
-                    deletarFornecedor();
-                    break;
+                case 1: inserirFornecedor(); break;
+                case 2: listarFornecedores(); break;
+                case 3: buscarFornecedorPorId(); break;
+                case 4: buscarFornecedorPorNome(); break;
+                case 5: atualizarFornecedor(); break;
+                case 6: deletarFornecedor(); break;
             }
         } while (opcao != 0);
     }
@@ -327,27 +322,13 @@ public class Main {
             opcao = lerInteiro("Opção: ");
 
             switch (opcao) {
-                case 1:
-                    inserirCliente();
-                    break;
-                case 2:
-                    listarClientes();
-                    break;
-                case 3:
-                    buscarClientePorId();
-                    break;
-                case 4:
-                    buscarClientePorNome();
-                    break;
-                case 5:
-                    buscarClientePorCpf();
-                    break;
-                case 6:
-                    atualizarCliente();
-                    break;
-                case 7:
-                    deletarCliente();
-                    break;
+                case 1: inserirCliente(); break;
+                case 2: listarClientes(); break;
+                case 3: buscarClientePorId(); break;
+                case 4: buscarClientePorNome(); break;
+                case 5: buscarClientePorCpf(); break;
+                case 6: atualizarCliente(); break;
+                case 7: deletarCliente(); break;
             }
         } while (opcao != 0);
     }
@@ -464,24 +445,12 @@ public class Main {
             opcao = lerInteiro("Opção: ");
 
             switch (opcao) {
-                case 1:
-                    inserirProduto();
-                    break;
-                case 2:
-                    listarProdutos();
-                    break;
-                case 3:
-                    buscarProdutoPorId();
-                    break;
-                case 4:
-                    buscarProdutoPorNome();
-                    break;
-                case 5:
-                    atualizarProduto();
-                    break;
-                case 6:
-                    deletarProduto();
-                    break;
+                case 1: inserirProduto(); break;
+                case 2: listarProdutos(); break;
+                case 3: buscarProdutoPorId(); break;
+                case 4: buscarProdutoPorNome(); break;
+                case 5: atualizarProduto(); break;
+                case 6: deletarProduto(); break;
             }
         } while (opcao != 0);
     }
@@ -589,23 +558,19 @@ public class Main {
             System.out.println("2. 📋 Listar Todas Vendas");
             System.out.println("3. 🔍 Buscar Venda por ID");
             System.out.println("4. 🔍 Buscar Vendas por Cliente");
+            System.out.println("5. ✏️ Atualizar Cliente da Venda");
+            System.out.println("6. 🗑️ Deletar Venda");
             System.out.println("0. ↩️ Voltar");
 
             opcao = lerInteiro("Opção: ");
 
             switch (opcao) {
-                case 1:
-                    registrarVenda();
-                    break;
-                case 2:
-                    listarVendas();
-                    break;
-                case 3:
-                    buscarVendaPorId();
-                    break;
-                case 4:
-                    buscarVendasPorCliente();
-                    break;
+                case 1: registrarVenda(); break;
+                case 2: listarVendas(); break;
+                case 3: buscarVendaPorId(); break;
+                case 4: buscarVendasPorCliente(); break;
+                case 5: atualizarVenda(); break;
+                case 6: deletarVenda(); break;
             }
         } while (opcao != 0);
     }
@@ -696,6 +661,82 @@ public class Main {
         }
     }
 
+    private static void atualizarVenda() throws SQLException {
+        if (tipoUsuario.equals("OPERADOR")) {
+            System.out.println("\n⚠️ OPERADOR não pode ATUALIZAR vendas! Use ADMIN.");
+            return;
+        }
+
+        System.out.println("\n--- ATUALIZAR VENDA ---");
+        int id = lerInteiro("ID da venda: ");
+        Venda v = vendaDAO.findById(id);
+
+        if (v != null) {
+            System.out.println("Dados atuais: " + v);
+            System.out.println("Cliente atual: " + clienteDAO.findById(v.getIdCliente()).getNome());
+
+            // Mostrar clientes disponíveis
+            listarClientes();
+            int novoIdCliente = lerInteiro("Novo ID do Cliente (0 para manter): ");
+
+            if (novoIdCliente != 0) {
+                Cliente novoCliente = clienteDAO.findById(novoIdCliente);
+                if (novoCliente != null) {
+                    v.setIdCliente(novoIdCliente);
+                    vendaDAO.update(v);
+                    System.out.println("✅ Venda atualizada com sucesso!");
+                    System.out.println("   Cliente alterado para: " + novoCliente.getNome());
+                } else {
+                    System.out.println("❌ Cliente não encontrado! Atualização cancelada.");
+                }
+            } else {
+                System.out.println("✅ Nenhuma alteração realizada.");
+            }
+        } else {
+            System.out.println("❌ Venda não encontrada!");
+        }
+    }
+
+    private static void deletarVenda() throws SQLException {
+        if (tipoUsuario.equals("OPERADOR")) {
+            System.out.println("\n⚠️ OPERADOR não pode DELETAR vendas! Use ADMIN.");
+            return;
+        }
+
+        System.out.println("\n--- DELETAR VENDA ---");
+        int id = lerInteiro("ID da venda a deletar: ");
+        Venda v = vendaDAO.findById(id);
+
+        if (v != null) {
+            // Mostrar detalhes da venda antes de deletar
+            System.out.println("\n⚠️ ATENÇÃO! Você está prestes a deletar a venda:");
+            System.out.println(v);
+
+            List<ItemVenda> itens = itemVendaDAO.findByVenda(id);
+            System.out.println("\nItens da venda:");
+            for (ItemVenda item : itens) {
+                Produto p = produtoDAO.findById(item.getIdProduto());
+                System.out.println("  → " + p.getNome() + " | Qtd: " + item.getQuantidade());
+            }
+
+            System.out.print("\nTem certeza? (S/N): ");
+            String confirmacao = scanner.nextLine();
+
+            if (confirmacao.equalsIgnoreCase("S")) {
+                // Primeiro deleta os itens da venda
+                itemVendaDAO.deleteByVenda(id);
+                // Depois deleta a venda
+                vendaDAO.delete(id);
+                System.out.println("✅ Venda deletada com sucesso!");
+                System.out.println("   Estoque NÃO foi restaurado (histórico mantido).");
+            } else {
+                System.out.println("❌ Operação cancelada.");
+            }
+        } else {
+            System.out.println("❌ Venda não encontrada!");
+        }
+    }
+
     // ==================== CONSULTAS ESPECIAIS (JOINs) ====================
 
     private static void menuConsultasEspeciais() throws SQLException {
@@ -712,15 +753,9 @@ public class Main {
             opcao = lerInteiro("Opção: ");
 
             switch (opcao) {
-                case 1:
-                    relatorioVendas();
-                    break;
-                case 2:
-                    produtosPorFornecedor();
-                    break;
-                case 3:
-                    totalVendasPorCliente();
-                    break;
+                case 1: relatorioVendas(); break;
+                case 2: produtosPorFornecedor(); break;
+                case 3: totalVendasPorCliente(); break;
             }
         } while (opcao != 0);
     }
